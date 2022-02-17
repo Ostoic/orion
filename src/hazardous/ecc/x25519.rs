@@ -61,11 +61,10 @@
 //! ```
 //! [`PrivateKey::generate()`]: crate::hazardous::ecc::x25519::PrivateKey::generate
 //! [`orion::kex`]: crate::kex
-
+use serde::{Serialize, Deserialize};
 use crate::errors::UnknownCryptoError;
 use crate::util::secure_cmp;
 use core::ops::{Add, Mul, Sub};
-
 /// Formally verified Curve25519 field arithmetic from: <https://github.com/mit-plv/fiat-crypto>.
 use fiat_crypto::curve25519_64 as fiat_curve25519_u64;
 
@@ -86,7 +85,7 @@ const BASEPOINT: [u8; 32] = [
 /// The result of computing a shared secret with a low order point.
 const LOW_ORDER_POINT_RESULT: [u8; 32] = [0u8; 32];
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
 /// Represent an element in the curve field.
 struct FieldElement([u64; 5]);
 
@@ -283,7 +282,7 @@ impl FieldElement {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Deserialize, Serialize)]
 /// Represents a Scalar decoded from a byte array.
 struct Scalar([u8; PRIVATE_KEY_SIZE]);
 
@@ -386,7 +385,7 @@ fn mont_ladder(scalar: &Scalar, point: FieldElement) -> FieldElement {
 /// # Errors:
 /// An error will be returned if:
 /// - `slice` is not 32 bytes.
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Deserialize, Serialize)]
 pub struct PublicKey {
     fe: FieldElement,
 }
@@ -412,10 +411,6 @@ impl From<[u8; PUBLIC_KEY_SIZE]> for PublicKey {
         }
     }
 }
-
-impl_try_from_trait!(PublicKey);
-#[cfg(feature = "serde")]
-impl_serde_traits!(PublicKey, to_bytes);
 
 impl core::convert::TryFrom<&PrivateKey> for PublicKey {
     type Error = UnknownCryptoError;
@@ -510,7 +505,7 @@ impl PublicKey {
 /// # }
 /// # Ok::<(), orion::errors::UnknownCryptoError>(())
 /// ```
-#[derive(PartialEq)]
+#[derive(PartialEq, Deserialize, Serialize)]
 pub struct PrivateKey {
     scalar: Scalar,
 }
@@ -539,6 +534,9 @@ impl From<[u8; PRIVATE_KEY_SIZE]> for PrivateKey {
         }
     }
 }
+
+impl_try_from_trait!(PrivateKey);
+// impl_serde_traits!(PrivateKey, to_bytes);
 
 impl PrivateKey {
     #[must_use = "SECURITY WARNING: Ignoring a Result can have real security implications."]

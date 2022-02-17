@@ -79,21 +79,22 @@
 //! // Server responds and client decrypts the received message:
 //! let server_msg = aead::seal(server_keys.transport(), b"Hello, client!")?;
 //! assert_eq!(aead::open(client_keys.receiving(), &server_msg)?, b"Hello, client!");
-//! # Ok::<(), orion::errors::UnknownCryptoError>(())
+//! # Ok::<(), orion::errors::UnknownCryptoError>
+//! (())
 //! ```
 
 #![cfg_attr(docsrs, doc(cfg(feature = "safe_api")))]
-
 pub use super::hltypes::SecretKey;
 pub use crate::hazardous::ecc::x25519::PrivateKey;
 pub use crate::hazardous::ecc::x25519::PublicKey;
+use serde::{Deserialize, Serialize};
 
 use crate::errors::UnknownCryptoError;
 use crate::hazardous::ecc::x25519;
 use crate::hazardous::hash::blake2::blake2b::{Blake2b, Digest};
 use core::convert::TryFrom;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 /// A key pair used to establish shared keys for a single session.
 pub struct EphemeralClientSession {
     private_key: PrivateKey,
@@ -183,7 +184,7 @@ impl EphemeralServerSession {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 /// A set of shared secrets for either transmitting to this entity or send to another party.
 pub struct SessionKeys {
     rx: SecretKey,

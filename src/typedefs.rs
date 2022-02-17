@@ -86,7 +86,7 @@ macro_rules! impl_normal_debug_trait (($name:ident) => (
 ));
 
 /// Macro that implements the `serde::{Serialize, Deserialize}` traits.
-#[cfg(feature = "serde")]
+
 macro_rules! impl_serde_traits (($name:ident, $bytes_function:ident) => (
 
     #[cfg_attr(docsrs, doc(cfg(feature = "serde")))]
@@ -292,7 +292,7 @@ macro_rules! func_generate_variable_size (($name:ident) => (
 /// Test implementation macros
 
 #[cfg(test)]
-#[cfg(feature = "serde")]
+
 macro_rules! test_serde_impls (($name:ident, $gen_length:expr) => (
     #[test]
     fn test_serde_serialized_equivalence_to_bytes_fn() {
@@ -641,7 +641,6 @@ macro_rules! construct_public {
         impl_try_from_trait!($name);
         impl_asref_trait!($name);
 
-        #[cfg(feature = "serde")]
         impl_serde_traits!($name, as_ref);
 
         impl $name {
@@ -660,7 +659,7 @@ macro_rules! construct_public {
             test_as_bytes_and_get_length!($name, $lower_bound, $upper_bound, as_ref);
             test_partial_eq!($name, $upper_bound);
 
-            #[cfg(feature = "serde")]
+
             test_serde_impls!($name, $upper_bound);
 
             #[cfg(test)]
@@ -688,7 +687,7 @@ macro_rules! construct_public {
         impl_try_from_trait!($name);
         impl_asref_trait!($name);
 
-        #[cfg(feature = "serde")]
+
         impl_serde_traits!($name, as_ref);
 
         impl $name {
@@ -706,7 +705,7 @@ macro_rules! construct_public {
             test_as_bytes_and_get_length!($name, $lower_bound, $upper_bound, as_ref);
             test_partial_eq!($name, $upper_bound);
 
-            #[cfg(feature = "serde")]
+
             test_serde_impls!($name, $upper_bound);
 
             #[cfg(test)]
@@ -760,7 +759,7 @@ macro_rules! construct_tag {
         impl_ct_partialeq_trait!($name, unprotected_as_bytes);
         impl_try_from_trait!($name);
 
-        #[cfg(feature = "serde")]
+
         impl_serde_traits!($name, unprotected_as_bytes);
 
         impl $name {
@@ -780,7 +779,7 @@ macro_rules! construct_tag {
             test_as_bytes_and_get_length!($name, $lower_bound, $upper_bound, unprotected_as_bytes);
             test_partial_eq!($name, $upper_bound);
 
-            #[cfg(feature = "serde")]
+
             test_serde_impls!($name, $upper_bound);
 
             #[cfg(test)]
@@ -915,6 +914,7 @@ macro_rules! construct_secret_key_variable_size {
         /// # }
         /// # Ok::<(), orion::errors::UnknownCryptoError>(())
         /// ```
+        #[derive(serde::Serialize, serde::Deserialize)]
         pub struct $name {
             pub(crate) value: Vec<u8>,
             original_length: usize,
@@ -966,7 +966,7 @@ macro_rules! construct_salt_variable_size {
         impl_asref_trait!($name);
         impl_try_from_trait!($name);
 
-        #[cfg(feature = "serde")]
+
         impl_serde_traits!($name, as_ref);
 
         impl $name {
@@ -986,7 +986,7 @@ macro_rules! construct_salt_variable_size {
             test_partial_eq!($name, $default_size);
             test_normal_debug!($name, $default_size);
 
-            #[cfg(feature = "serde")]
+
             test_serde_impls!($name, $default_size);
         }
     );

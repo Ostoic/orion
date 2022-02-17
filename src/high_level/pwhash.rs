@@ -98,7 +98,7 @@ use crate::{
 use ct_codecs::{Base64NoPadding, Decoder, Encoder};
 use zeroize::Zeroizing;
 
-#[cfg(feature = "serde")]
+
 use serde::{
     de::{self, Deserialize, Deserializer},
     ser::{Serialize, Serializer},
@@ -370,7 +370,7 @@ impl core::fmt::Debug for PasswordHash {
 
 impl_ct_partialeq_trait!(PasswordHash, unprotected_as_bytes);
 
-#[cfg(feature = "serde")]
+
 /// `PasswordHash` serializes as would a [`String`](std::string::String). Note that
 /// the serialized type likely does not have the same protections that Orion
 /// provides, such as constant-time operations. A good rule of thumb is to only
@@ -385,7 +385,7 @@ impl Serialize for PasswordHash {
     }
 }
 
-#[cfg(feature = "serde")]
+
 /// `PasswordHash` deserializes from a [`String`](std::string::String).
 impl<'de> Deserialize<'de> for PasswordHash {
     fn deserialize<D>(deserializer: D) -> Result<PasswordHash, D::Error>
@@ -485,7 +485,7 @@ mod public {
         assert_eq!(debug, expected);
     }
 
-    #[cfg(feature = "serde")]
+
     mod test_serde_impls {
         use super::*;
 
